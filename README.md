@@ -266,12 +266,6 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ---
 
-## 📞 Support
-
-For support, email support@example.com or open an issue in the repository.
-
----
-
 ## 🔗 Links
 
 - [Flutter Documentation](https://flutter.dev/docs)
