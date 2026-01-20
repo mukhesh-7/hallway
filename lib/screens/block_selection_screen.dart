@@ -4,6 +4,8 @@ import 'dart:ui';
 import '../models/hall.dart';
 import '../data/mock_data.dart';
 import 'hall_availability_screen.dart';
+import 'my_bookings_screen.dart';
+import 'profile_screen.dart';
 
 class BlockSelectionScreen extends StatefulWidget {
   const BlockSelectionScreen({super.key});
@@ -343,7 +345,24 @@ class _BlockSelectionScreenState extends State<BlockSelectionScreen>
               _NavItem(
                 icon: Icons.confirmation_number_outlined,
                 isSelected: _selectedNavIndex == 1,
-                onTap: () => setState(() => _selectedNavIndex = 1),
+                onTap: () {
+                  setState(() => _selectedNavIndex = 1);
+                  Navigator.push(
+                    context,
+                    PageRouteBuilder(
+                      pageBuilder: (context, animation, secondaryAnimation) =>
+                          const MyBookingsScreen(),
+                      transitionsBuilder:
+                          (context, animation, secondaryAnimation, child) {
+                            return FadeTransition(
+                              opacity: animation,
+                              child: child,
+                            );
+                          },
+                      transitionDuration: const Duration(milliseconds: 400),
+                    ),
+                  ).then((_) => setState(() => _selectedNavIndex = 0));
+                },
               ),
               _NavItem(
                 icon: Icons.calendar_today_rounded,
@@ -351,9 +370,26 @@ class _BlockSelectionScreenState extends State<BlockSelectionScreen>
                 onTap: () => setState(() => _selectedNavIndex = 2),
               ),
               _NavItem(
-                icon: Icons.settings_outlined,
+                icon: Icons.person_outline,
                 isSelected: _selectedNavIndex == 3,
-                onTap: () => setState(() => _selectedNavIndex = 3),
+                onTap: () {
+                  setState(() => _selectedNavIndex = 3);
+                  Navigator.push(
+                    context,
+                    PageRouteBuilder(
+                      pageBuilder: (context, animation, secondaryAnimation) =>
+                          const ProfileScreen(),
+                      transitionsBuilder:
+                          (context, animation, secondaryAnimation, child) {
+                            return FadeTransition(
+                              opacity: animation,
+                              child: child,
+                            );
+                          },
+                      transitionDuration: const Duration(milliseconds: 400),
+                    ),
+                  ).then((_) => setState(() => _selectedNavIndex = 0));
+                },
               ),
             ],
           ),
