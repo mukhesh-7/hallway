@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'screens/block_selection_screen.dart';
+import 'screens/main_navigation_wrapper.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -18,7 +18,7 @@ void main() {
   runApp(const HallWayApp());
 }
 
-class HallWayApp extends StatelessWidget {
+  class HallWayApp extends StatelessWidget {
   const HallWayApp({super.key});
 
   @override
@@ -46,7 +46,7 @@ class HallWayApp extends StatelessWidget {
           ),
         ),
       ),
-      home: const BlockSelectionScreen(),
+      home: const MainNavigationWrapper(),
     );
   }
 }

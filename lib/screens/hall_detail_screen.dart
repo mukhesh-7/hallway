@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'dart:ui';
 import '../models/hall.dart';
 import '../data/mock_data.dart';
 import 'booking_flow_screen.dart';

@@ -51,6 +51,8 @@ class Booking {
   final DateTime date;
   final String purpose;
   final BookingStatus status;
+  final String department;
+  final String eventDetails;
 
   const Booking({
     required this.id,
@@ -59,6 +61,8 @@ class Booking {
     required this.date,
     required this.purpose,
     required this.status,
+    required this.department,
+    required this.eventDetails,
   });
 }
 

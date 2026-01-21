@@ -122,6 +122,8 @@ class _BookingFlowScreenState extends State<BookingFlowScreen>
         date: widget.selectedDate,
         purpose: _purposeController.text,
         status: BookingStatus.pending,
+        department: 'Artificial Intelligence and Data Science',
+        eventDetails: _purposeController.text,
       );
 
       Navigator.of(context).pushReplacement(

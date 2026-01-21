@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'dart:ui';
-import '../models/hall.dart';
-import '../data/mock_data.dart';
 import 'hall_availability_screen.dart';
-import 'my_bookings_screen.dart';
-import 'profile_screen.dart';
 
 class BlockSelectionScreen extends StatefulWidget {
   const BlockSelectionScreen({super.key});
@@ -19,15 +15,30 @@ class _BlockSelectionScreenState extends State<BlockSelectionScreen>
   late AnimationController _fadeController;
   late Animation<double> _fadeAnimation;
 
-  String _selectedCategory = 'All';
-  int _selectedNavIndex = 0;
-
-  final List<String> _categories = [
-    'All',
-    'A Block',
-    'B Block',
-    'C Block',
-    'D Block',
+  final List<Map<String, String>> _blocks = [
+    {
+      'name': 'A Block',
+      'description':
+          'Modern facilities with state-of-the-art auditoriums and conference rooms',
+      'hallCount': '3',
+    },
+    {
+      'name': 'B Block',
+      'description':
+          'Equipped with lecture halls and specialized workshop spaces',
+      'hallCount': '3',
+    },
+    {
+      'name': 'C Block',
+      'description': 'Multi-purpose halls perfect for events and exhibitions',
+      'hallCount': '3',
+    },
+    {
+      'name': 'D Block',
+      'description':
+          'Innovation labs and presentation halls with latest technology',
+      'hallCount': '3',
+    },
   ];
 
   @override
@@ -50,14 +61,6 @@ class _BlockSelectionScreenState extends State<BlockSelectionScreen>
     super.dispose();
   }
 
-  List<Hall> _getFilteredHalls() {
-    if (_selectedCategory == 'All') {
-      return MockData.getAllHalls();
-    } else {
-      return MockData.getHallsForBlock(_selectedCategory);
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -67,11 +70,7 @@ class _BlockSelectionScreenState extends State<BlockSelectionScreen>
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [
-              Color(0xFF1A0F2E), // Deep purple
-              Color(0xFF0F0B1B), // Deep dark
-              Color(0xFF1A1230), // Dark purple
-            ],
+            colors: [Color(0xFF1A0F2E), Color(0xFF0F0B1B), Color(0xFF1A1230)],
             stops: [0.0, 0.5, 1.0],
           ),
         ),
@@ -80,26 +79,18 @@ class _BlockSelectionScreenState extends State<BlockSelectionScreen>
           child: FadeTransition(
             opacity: _fadeAnimation,
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 _buildHeader(),
-                _buildSearchBar(),
-                _buildCategoryChips(),
-                Expanded(
-                  child: SingleChildScrollView(
-                    physics: const BouncingScrollPhysics(),
-                    padding: const EdgeInsets.only(bottom: 100),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [_buildAvailableHallsSection()],
-                    ),
-                  ),
-                ),
+                const SizedBox(height: 24),
+                _buildSectionTitle(),
+                const SizedBox(height: 16),
+                Expanded(child: _buildHorizontalBlockList()),
               ],
             ),
           ),
         ),
       ),
-      bottomNavigationBar: _buildFloatingBottomNav(),
     );
   }
 
@@ -163,302 +154,96 @@ class _BlockSelectionScreenState extends State<BlockSelectionScreen>
     );
   }
 
-  Widget _buildSearchBar() {
+  Widget _buildSectionTitle() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-      child: Row(
+      padding: const EdgeInsets.only(left: 24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Expanded(
-            child: Container(
-              height: 52,
-              decoration: BoxDecoration(
-                color: const Color(0xFF1A1625).withOpacity(0.6),
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(
-                  color: Colors.white.withOpacity(0.1),
-                  width: 1,
-                ),
-              ),
-              child: TextField(
-                style: GoogleFonts.dmSans(color: Colors.white),
-                decoration: InputDecoration(
-                  hintText: 'Search...',
-                  hintStyle: GoogleFonts.dmSans(
-                    color: Colors.white.withOpacity(0.4),
-                    fontSize: 15,
-                  ),
-                  prefixIcon: Icon(
-                    Icons.search,
-                    color: Colors.white.withOpacity(0.4),
-                  ),
-                  border: InputBorder.none,
-                  contentPadding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 16,
-                  ),
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(width: 12),
-          Container(
-            width: 52,
-            height: 52,
-            decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                colors: [Color(0xFFB4FF39), Color(0xFF8FE526)],
-              ),
-              borderRadius: BorderRadius.circular(16),
-              boxShadow: [
-                BoxShadow(
-                  color: const Color(0xFFB4FF39).withOpacity(0.4),
-                  blurRadius: 16,
-                  offset: const Offset(0, 4),
-                ),
-              ],
-            ),
-            child: const Icon(Icons.tune, color: Color(0xFF0F0B1B)),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildCategoryChips() {
-    return SizedBox(
-      height: 50,
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        physics: const BouncingScrollPhysics(),
-        padding: const EdgeInsets.symmetric(horizontal: 24),
-        itemCount: _categories.length,
-        itemBuilder: (context, index) {
-          final category = _categories[index];
-          final isSelected = _selectedCategory == category;
-
-          return Padding(
-            padding: const EdgeInsets.only(right: 12),
-            child: _CategoryChip(
-              label: category,
-              isSelected: isSelected,
-              onTap: () {
-                setState(() {
-                  _selectedCategory = category;
-                });
-              },
-            ),
-          );
-        },
-      ),
-    );
-  }
-
-  Widget _buildAvailableHallsSection() {
-    final halls = _getFilteredHalls();
-    final showBlockName = _selectedCategory == 'All';
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-          child: Text(
-            'Available Halls',
+          Text(
+            'Select Block',
             style: GoogleFonts.dmSans(
-              fontSize: 20,
+              fontSize: 28,
               fontWeight: FontWeight.bold,
               color: Colors.white,
+              letterSpacing: -0.5,
             ),
           ),
-        ),
-        const SizedBox(height: 8),
-        ...halls.asMap().entries.map((entry) {
-          final index = entry.key;
-          final hall = entry.value;
-          return TweenAnimationBuilder<double>(
-            duration: Duration(milliseconds: 400 + (index * 100)),
-            tween: Tween(begin: 0.0, end: 1.0),
-            curve: Curves.easeOutCubic,
-            builder: (context, value, child) {
-              return Transform.translate(
-                offset: Offset(30 * (1 - value), 0),
-                child: Opacity(opacity: value, child: child),
-              );
-            },
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-              child: _HallListCard(
-                hall: hall,
-                showBlockName: showBlockName,
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    PageRouteBuilder(
-                      pageBuilder: (context, animation, secondaryAnimation) =>
-                          HallAvailabilityScreen(blockName: hall.block),
-                      transitionsBuilder:
-                          (context, animation, secondaryAnimation, child) {
-                            return FadeTransition(
-                              opacity: animation,
-                              child: child,
-                            );
-                          },
-                      transitionDuration: const Duration(milliseconds: 400),
-                    ),
-                  );
-                },
-              ),
+          const SizedBox(height: 8),
+          Text(
+            'Choose a building block to view available halls',
+            style: GoogleFonts.dmSans(
+              fontSize: 14,
+              color: Colors.white.withOpacity(0.6),
+              fontWeight: FontWeight.w500,
             ),
-          );
-        }),
-      ],
-    );
-  }
-
-  Widget _buildFloatingBottomNav() {
-    return Container(
-      margin: const EdgeInsets.all(20),
-      height: 70,
-      decoration: BoxDecoration(
-        color: const Color(0xFF1A1625),
-        borderRadius: BorderRadius.circular(24),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.3),
-            blurRadius: 20,
-            offset: const Offset(0, 10),
           ),
         ],
       ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(24),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              _NavItem(
-                icon: Icons.home_rounded,
-                isSelected: _selectedNavIndex == 0,
-                onTap: () => setState(() => _selectedNavIndex = 0),
-              ),
-              _NavItem(
-                icon: Icons.confirmation_number_outlined,
-                isSelected: _selectedNavIndex == 1,
-                onTap: () {
-                  setState(() => _selectedNavIndex = 1);
-                  Navigator.push(
-                    context,
-                    PageRouteBuilder(
-                      pageBuilder: (context, animation, secondaryAnimation) =>
-                          const MyBookingsScreen(),
-                      transitionsBuilder:
-                          (context, animation, secondaryAnimation, child) {
-                            return FadeTransition(
-                              opacity: animation,
-                              child: child,
-                            );
-                          },
-                      transitionDuration: const Duration(milliseconds: 400),
-                    ),
-                  ).then((_) => setState(() => _selectedNavIndex = 0));
-                },
-              ),
-              _NavItem(
-                icon: Icons.calendar_today_rounded,
-                isSelected: _selectedNavIndex == 2,
-                onTap: () => setState(() => _selectedNavIndex = 2),
-              ),
-              _NavItem(
-                icon: Icons.person_outline,
-                isSelected: _selectedNavIndex == 3,
-                onTap: () {
-                  setState(() => _selectedNavIndex = 3);
-                  Navigator.push(
-                    context,
-                    PageRouteBuilder(
-                      pageBuilder: (context, animation, secondaryAnimation) =>
-                          const ProfileScreen(),
-                      transitionsBuilder:
-                          (context, animation, secondaryAnimation, child) {
-                            return FadeTransition(
-                              opacity: animation,
-                              child: child,
-                            );
-                          },
-                      transitionDuration: const Duration(milliseconds: 400),
-                    ),
-                  ).then((_) => setState(() => _selectedNavIndex = 0));
-                },
-              ),
-            ],
+    );
+  }
+
+  Widget _buildHorizontalBlockList() {
+    return ListView.builder(
+      scrollDirection: Axis.vertical,
+      physics: const BouncingScrollPhysics(),
+      padding: const EdgeInsets.fromLTRB(24, 0, 24, 100),
+      itemCount: _blocks.length,
+      itemBuilder: (context, index) {
+        return TweenAnimationBuilder<double>(
+          duration: Duration(milliseconds: 400 + (index * 100)),
+          tween: Tween(begin: 0.0, end: 1.0),
+          curve: Curves.easeOutCubic,
+          builder: (context, value, child) {
+            return Transform.translate(
+              offset: Offset(0, 30 * (1 - value)),
+              child: Opacity(opacity: value, child: child),
+            );
+          },
+          child: Padding(
+            padding: EdgeInsets.only(
+              bottom: index < _blocks.length - 1 ? 0 : 80,
+            ),
+            child: _BlockCard(
+              blockData: _blocks[index],
+              onTap: () {
+                Navigator.push(
+                  context,
+                  PageRouteBuilder(
+                    pageBuilder: (context, animation, secondaryAnimation) =>
+                        HallAvailabilityScreen(
+                          blockName: _blocks[index]['name']!,
+                        ),
+                    transitionsBuilder:
+                        (context, animation, secondaryAnimation, child) {
+                          return FadeTransition(
+                            opacity: animation,
+                            child: child,
+                          );
+                        },
+                    transitionDuration: const Duration(milliseconds: 400),
+                  ),
+                );
+              },
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }
 
-// Category Chip Widget
-class _CategoryChip extends StatelessWidget {
-  final String label;
-  final bool isSelected;
+class _BlockCard extends StatefulWidget {
+  final Map<String, String> blockData;
   final VoidCallback onTap;
 
-  const _CategoryChip({
-    required this.label,
-    required this.isSelected,
-    required this.onTap,
-  });
+  const _BlockCard({required this.blockData, required this.onTap});
 
   @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeOut,
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-        decoration: BoxDecoration(
-          color: isSelected
-              ? Colors.white
-              : const Color(0xFF1A1625).withOpacity(0.4),
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: isSelected ? Colors.white : Colors.white.withOpacity(0.1),
-            width: 1,
-          ),
-        ),
-        child: Text(
-          label,
-          style: GoogleFonts.dmSans(
-            fontSize: 14,
-            fontWeight: FontWeight.w600,
-            color: isSelected ? const Color(0xFF0F0B1B) : Colors.white,
-          ),
-        ),
-      ),
-    );
-  }
+  State<_BlockCard> createState() => _BlockCardState();
 }
 
-// Hall List Card Widget
-class _HallListCard extends StatefulWidget {
-  final Hall hall;
-  final bool showBlockName;
-  final VoidCallback onTap;
-
-  const _HallListCard({
-    required this.hall,
-    required this.showBlockName,
-    required this.onTap,
-  });
-
-  @override
-  State<_HallListCard> createState() => _HallListCardState();
-}
-
-class _HallListCardState extends State<_HallListCard>
+class _BlockCardState extends State<_BlockCard>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _scaleAnimation;
@@ -482,30 +267,25 @@ class _HallListCardState extends State<_HallListCard>
     super.dispose();
   }
 
-  Color _getStatusColor() {
-    switch (widget.hall.status) {
-      case HallStatus.available:
-        return const Color(0xFFB4FF39);
-      case HallStatus.partiallyBooked:
-        return const Color(0xFFFFA500);
-      case HallStatus.fullyBooked:
-        return const Color(0xFFFF4444);
-    }
-  }
-
-  String _getStatusText() {
-    switch (widget.hall.status) {
-      case HallStatus.available:
-        return 'Available';
-      case HallStatus.partiallyBooked:
-        return 'Limited';
-      case HallStatus.fullyBooked:
-        return 'Booked';
+  Color _getBlockColor() {
+    switch (widget.blockData['name']) {
+      case 'A Block':
+        return const Color(0xFF6366F1);
+      case 'B Block':
+        return const Color(0xFFEC4899);
+      case 'C Block':
+        return const Color(0xFF10B981);
+      case 'D Block':
+        return const Color(0xFFF59E0B);
+      default:
+        return const Color(0xFF6366F1);
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final blockColor = _getBlockColor();
+
     return GestureDetector(
       onTapDown: (_) => _controller.forward(),
       onTapUp: (_) {
@@ -516,126 +296,141 @@ class _HallListCardState extends State<_HallListCard>
       child: ScaleTransition(
         scale: _scaleAnimation,
         child: Container(
+          margin: const EdgeInsets.only(bottom: 20),
           decoration: BoxDecoration(
-            color: const Color(0xFF1A1625).withOpacity(0.6),
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: Colors.white.withOpacity(0.1), width: 1),
+            borderRadius: BorderRadius.circular(24),
+            boxShadow: [
+              BoxShadow(
+                color: blockColor.withOpacity(0.3),
+                blurRadius: 20,
+                offset: const Offset(0, 8),
+              ),
+            ],
           ),
           child: ClipRRect(
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(24),
             child: BackdropFilter(
               filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Row(
+              child: Container(
+                decoration: BoxDecoration(
+                  color: const Color(0xFF1A1625).withOpacity(0.6),
+                  borderRadius: BorderRadius.circular(24),
+                  border: Border.all(
+                    color: Colors.white.withOpacity(0.1),
+                    width: 1,
+                  ),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Hall Icon
+                    // Block Image Area
                     Container(
-                      width: 70,
-                      height: 70,
+                      height: 180,
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(16),
                         gradient: LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
                           colors: [
-                            const Color(0xFF2D1B4E).withOpacity(0.6),
-                            const Color(0xFF1A1230).withOpacity(0.6),
+                            blockColor.withOpacity(0.8),
+                            blockColor.withOpacity(0.6),
                           ],
                         ),
                       ),
-                      child: Center(
-                        child: Icon(
-                          Icons.meeting_room_rounded,
-                          size: 36,
-                          color: Colors.white.withOpacity(0.8),
-                        ),
+                      child: Stack(
+                        children: [
+                          // Background icon
+                          Center(
+                            child: Icon(
+                              Icons.business,
+                              size: 80,
+                              color: Colors.white.withOpacity(0.15),
+                            ),
+                          ),
+                          // Gradient overlay
+                          Container(
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                                colors: [
+                                  Colors.transparent,
+                                  Colors.black.withOpacity(0.6),
+                                ],
+                                stops: const [0.6, 1.0],
+                              ),
+                            ),
+                          ),
+                          // Hall count badge (top right)
+                          Positioned(
+                            top: 16,
+                            right: 16,
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 6,
+                              ),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFB4FF39),
+                                borderRadius: BorderRadius.circular(12),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: const Color(
+                                      0xFFB4FF39,
+                                    ).withOpacity(0.4),
+                                    blurRadius: 8,
+                                    offset: const Offset(0, 2),
+                                  ),
+                                ],
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Container(
+                                    width: 6,
+                                    height: 6,
+                                    decoration: const BoxDecoration(
+                                      color: Color(0xFF0F0B1B),
+                                      shape: BoxShape.circle,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 6),
+                                  Text(
+                                    '${widget.blockData['hallCount']} Available',
+                                    style: GoogleFonts.dmSans(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold,
+                                      color: const Color(0xFF0F0B1B),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                    const SizedBox(width: 16),
-                    // Hall Info
-                    Expanded(
+                    // Block Info
+                    Padding(
+                      padding: const EdgeInsets.all(20.0),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Row(
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  widget.hall.name,
-                                  style: GoogleFonts.dmSans(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white,
-                                  ),
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                              const SizedBox(width: 8),
-                              _StatusBadge(
-                                color: _getStatusColor(),
-                                text: _getStatusText(),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 6),
-                          if (widget.showBlockName) ...[
-                            Row(
-                              children: [
-                                Icon(
-                                  Icons.location_on,
-                                  size: 14,
-                                  color: Colors.white.withOpacity(0.6),
-                                ),
-                                const SizedBox(width: 4),
-                                Text(
-                                  widget.hall.block,
-                                  style: GoogleFonts.dmSans(
-                                    fontSize: 13,
-                                    color: Colors.white.withOpacity(0.6),
-                                  ),
-                                ),
-                                const SizedBox(width: 12),
-                                Icon(
-                                  Icons.people_outline,
-                                  size: 14,
-                                  color: Colors.white.withOpacity(0.6),
-                                ),
-                                const SizedBox(width: 4),
-                                Text(
-                                  '${widget.hall.capacity} seats',
-                                  style: GoogleFonts.dmSans(
-                                    fontSize: 13,
-                                    color: Colors.white.withOpacity(0.6),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ] else ...[
-                            Row(
-                              children: [
-                                Icon(
-                                  Icons.people_outline,
-                                  size: 14,
-                                  color: Colors.white.withOpacity(0.6),
-                                ),
-                                const SizedBox(width: 4),
-                                Text(
-                                  '${widget.hall.capacity} seats',
-                                  style: GoogleFonts.dmSans(
-                                    fontSize: 13,
-                                    color: Colors.white.withOpacity(0.6),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                          const SizedBox(height: 6),
                           Text(
-                            widget.hall.description,
+                            widget.blockData['name']!,
                             style: GoogleFonts.dmSans(
-                              fontSize: 12,
-                              color: Colors.white.withOpacity(0.5),
-                              height: 1.4,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          Text(
+                            widget.blockData['description']!,
+                            style: GoogleFonts.dmSans(
+                              fontSize: 14,
+                              color: Colors.white.withOpacity(0.7),
+                              height: 1.5,
+                              fontWeight: FontWeight.w500,
                             ),
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
@@ -648,79 +443,6 @@ class _HallListCardState extends State<_HallListCard>
               ),
             ),
           ),
-        ),
-      ),
-    );
-  }
-}
-
-// Status Badge Widget
-class _StatusBadge extends StatelessWidget {
-  final Color color;
-  final String text;
-
-  const _StatusBadge({required this.color, required this.text});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(
-        color: color.withOpacity(0.15),
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: color.withOpacity(0.5), width: 1),
-      ),
-      child: Text(
-        text,
-        style: GoogleFonts.dmSans(
-          fontSize: 11,
-          fontWeight: FontWeight.w600,
-          color: color,
-        ),
-      ),
-    );
-  }
-}
-
-// Bottom Nav Item Widget
-class _NavItem extends StatelessWidget {
-  final IconData icon;
-  final bool isSelected;
-  final VoidCallback onTap;
-
-  const _NavItem({
-    required this.icon,
-    required this.isSelected,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeOut,
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: isSelected ? const Color(0xFFB4FF39) : Colors.transparent,
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: isSelected
-              ? [
-                  BoxShadow(
-                    color: const Color(0xFFB4FF39).withOpacity(0.4),
-                    blurRadius: 12,
-                    offset: const Offset(0, 4),
-                  ),
-                ]
-              : null,
-        ),
-        child: Icon(
-          icon,
-          color: isSelected
-              ? const Color(0xFF0F0B1B)
-              : Colors.white.withOpacity(0.5),
-          size: 24,
         ),
       ),
     );
