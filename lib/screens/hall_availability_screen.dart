@@ -465,11 +465,20 @@ class _HallCardState extends State<_HallCard>
                     ),
                     child: Stack(
                       children: [
-                        Center(
-                          child: Icon(
-                            Icons.meeting_room_rounded,
-                            size: 80,
-                            color: Colors.white.withOpacity(0.1),
+                        // Hall Image
+                        Positioned.fill(
+                          child: Image.asset(
+                            widget.hall.imageUrl,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) {
+                              return Center(
+                                child: Icon(
+                                  Icons.meeting_room_rounded,
+                                  size: 80,
+                                  color: Colors.white.withOpacity(0.1),
+                                ),
+                              );
+                            },
                           ),
                         ),
                         // Gradient overlay

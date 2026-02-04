@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../screens/block_selection_screen.dart';
+
+import 'login_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -45,25 +46,16 @@ class _ProfileScreenState extends State<ProfileScreen>
   }
 
   void _handleLogout() {
-    showDialog(
-      context: context,
-      builder: (context) => _LogoutDialog(
-        onConfirm: () {
-          Navigator.of(context).pop(); // Close dialog
-          Navigator.of(context).pushAndRemoveUntil(
-            PageRouteBuilder(
-              pageBuilder: (context, animation, secondaryAnimation) =>
-                  const BlockSelectionScreen(),
-              transitionsBuilder:
-                  (context, animation, secondaryAnimation, child) {
-                    return FadeTransition(opacity: animation, child: child);
-                  },
-              transitionDuration: const Duration(milliseconds: 400),
-            ),
-            (route) => false,
-          );
+    Navigator.of(context).pushAndRemoveUntil(
+      PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) =>
+            const LoginScreen(),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          return FadeTransition(opacity: animation, child: child);
         },
+        transitionDuration: const Duration(milliseconds: 400),
       ),
+      (route) => false,
     );
   }
 
@@ -334,122 +326,6 @@ class _InfoCard extends StatelessWidget {
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-class _LogoutDialog extends StatelessWidget {
-  final VoidCallback onConfirm;
-
-  const _LogoutDialog({required this.onConfirm});
-
-  @override
-  Widget build(BuildContext context) {
-    return Dialog(
-      backgroundColor: Colors.transparent,
-      child: Container(
-        padding: const EdgeInsets.all(24),
-        decoration: BoxDecoration(
-          color: const Color(0xFF1A1625),
-          borderRadius: BorderRadius.circular(24),
-          border: Border.all(color: Colors.white.withOpacity(0.1), width: 1),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              width: 60,
-              height: 60,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: const Color(0xFFFF4444).withOpacity(0.15),
-              ),
-              child: const Icon(
-                Icons.logout,
-                size: 30,
-                color: Color(0xFFFF4444),
-              ),
-            ),
-            const SizedBox(height: 20),
-            Text(
-              'Logout',
-              style: GoogleFonts.dmSans(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-            ),
-            const SizedBox(height: 12),
-            Text(
-              'Are you sure you want to logout?',
-              textAlign: TextAlign.center,
-              style: GoogleFonts.dmSans(
-                fontSize: 15,
-                color: Colors.white.withOpacity(0.7),
-              ),
-            ),
-            const SizedBox(height: 24),
-            Row(
-              children: [
-                Expanded(
-                  child: GestureDetector(
-                    onTap: () => Navigator.of(context).pop(),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(vertical: 14),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF2D1B4E).withOpacity(0.5),
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(
-                          color: Colors.white.withOpacity(0.1),
-                          width: 1,
-                        ),
-                      ),
-                      child: Text(
-                        'Cancel',
-                        textAlign: TextAlign.center,
-                        style: GoogleFonts.dmSans(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: GestureDetector(
-                    onTap: onConfirm,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(vertical: 14),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFFF4444),
-                        borderRadius: BorderRadius.circular(12),
-                        boxShadow: [
-                          BoxShadow(
-                            color: const Color(0xFFFF4444).withOpacity(0.4),
-                            blurRadius: 12,
-                            offset: const Offset(0, 4),
-                          ),
-                        ],
-                      ),
-                      child: Text(
-                        'Logout',
-                        textAlign: TextAlign.center,
-                        style: GoogleFonts.dmSans(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
       ),
     );
   }

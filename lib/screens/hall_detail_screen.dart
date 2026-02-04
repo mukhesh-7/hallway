@@ -155,21 +155,32 @@ class _HallDetailScreenState extends State<HallDetailScreen>
           height: 400,
           child: Stack(
             children: [
-              // Background Image/Gradient
-              Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [const Color(0xFF2D1B4E), const Color(0xFF1A1230)],
-                  ),
-                ),
-                child: Center(
-                  child: Icon(
-                    Icons.meeting_room_rounded,
-                    size: 120,
-                    color: Colors.white.withOpacity(0.1),
-                  ),
+              // Background Image
+              Positioned.fill(
+                child: Image.asset(
+                  widget.hall.imageUrl,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Container(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: [
+                            const Color(0xFF2D1B4E),
+                            const Color(0xFF1A1230),
+                          ],
+                        ),
+                      ),
+                      child: Center(
+                        child: Icon(
+                          Icons.meeting_room_rounded,
+                          size: 120,
+                          color: Colors.white.withOpacity(0.1),
+                        ),
+                      ),
+                    );
+                  },
                 ),
               ),
               // Gradient Overlay
@@ -496,17 +507,9 @@ class _HallDetailScreenState extends State<HallDetailScreen>
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(
-                  'Starting from',
-                  style: GoogleFonts.dmSans(
-                    fontSize: 14,
-                    color: const Color(0xFF0F0B1B).withOpacity(0.7),
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
                 const SizedBox(width: 8),
                 Text(
-                  '\$300.00',
+                  'Book now',
                   style: GoogleFonts.dmSans(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,

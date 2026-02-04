@@ -1,6 +1,6 @@
 # 🏛️ HallWay - Campus Hall Booking System
 
-A premium, dark-themed Flutter mobile application for booking campus halls at Dr. N.G.P. Educational Institutions.
+A premium, dark-themed Flutter mobile application for booking campus halls at Dr. N.G.P. Institute of Technology.
 
 ![Flutter](https://img.shields.io/badge/Flutter-3.10.7-02569B?logo=flutter)
 ![Dart](https://img.shields.io/badge/Dart-3.0+-0175C2?logo=dart)
@@ -208,8 +208,7 @@ Place your logo at: `assets/clg_logo.png`
 **Change Institution Name:**
 Edit `lib/screens/block_selection_screen.dart`:
 ```dart
-Text('Dr. N.G.P. Educational'),
-Text('Institutions'),
+Text('Dr. N.G.P. Institute of Technology'),
 ```
 
 **Modify Halls:**
@@ -262,7 +261,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 - Design inspiration from Dribbble's Ticket Booking App
 - Flutter team for the amazing framework
 - Google Fonts for DM Sans typography
-- Dr. N.G.P. Educational Institutions
+- Dr. N.G.P. Institute of Technology
 
 ---
 

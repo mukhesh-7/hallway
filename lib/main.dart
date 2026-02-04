@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'screens/main_navigation_wrapper.dart';
+
+import 'screens/login_screen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -18,7 +19,7 @@ void main() {
   runApp(const HallWayApp());
 }
 
-  class HallWayApp extends StatelessWidget {
+class HallWayApp extends StatelessWidget {
   const HallWayApp({super.key});
 
   @override
@@ -46,7 +47,7 @@ void main() {
           ),
         ),
       ),
-      home: const MainNavigationWrapper(),
+      home: const LoginScreen(),
     );
   }
 }

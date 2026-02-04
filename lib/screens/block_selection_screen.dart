@@ -21,23 +21,28 @@ class _BlockSelectionScreenState extends State<BlockSelectionScreen>
       'description':
           'Modern facilities with state-of-the-art auditoriums and conference rooms',
       'hallCount': '3',
+      'image': 'assets/a-block.webp',
     },
+
     {
       'name': 'B Block',
       'description':
           'Equipped with lecture halls and specialized workshop spaces',
       'hallCount': '3',
+      'image': 'assets/c-block.jpg',
     },
     {
       'name': 'C Block',
       'description': 'Multi-purpose halls perfect for events and exhibitions',
       'hallCount': '3',
+      'image': 'assets/c-block.jpg',
     },
     {
       'name': 'D Block',
       'description':
           'Innovation labs and presentation halls with latest technology',
       'hallCount': '3',
+      'image': 'assets/d_block.png',
     },
   ];
 
@@ -126,15 +131,7 @@ class _BlockSelectionScreenState extends State<BlockSelectionScreen>
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Dr. N.G.P. Educational',
-                    style: GoogleFonts.dmSans(
-                      fontSize: 14,
-                      color: Colors.white,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  Text(
-                    'Institutions',
+                    'Dr. N.G.P. Institute of Technology',
                     style: GoogleFonts.dmSans(
                       fontSize: 14,
                       color: Colors.white,
@@ -338,14 +335,22 @@ class _BlockCardState extends State<_BlockCard>
                       ),
                       child: Stack(
                         children: [
-                          // Background icon
-                          Center(
-                            child: Icon(
-                              Icons.business,
-                              size: 80,
-                              color: Colors.white.withOpacity(0.15),
+                          // Background image or icon
+                          if (widget.blockData.containsKey('image'))
+                            Positioned.fill(
+                              child: Image.asset(
+                                widget.blockData['image']!,
+                                fit: BoxFit.cover,
+                              ),
+                            )
+                          else
+                            Center(
+                              child: Icon(
+                                Icons.business,
+                                size: 80,
+                                color: Colors.white.withOpacity(0.15),
+                              ),
                             ),
-                          ),
                           // Gradient overlay
                           Container(
                             decoration: BoxDecoration(
