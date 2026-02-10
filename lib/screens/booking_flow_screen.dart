@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import '../models/hall.dart';
 import 'booking_confirmation_screen.dart';
+import '../services/booking_service.dart';
 
 class BookingFlowScreen extends StatefulWidget {
   final Hall hall;
@@ -125,6 +126,8 @@ class _BookingFlowScreenState extends State<BookingFlowScreen>
         department: 'Artificial Intelligence and Data Science',
         eventDetails: _purposeController.text,
       );
+
+      BookingService().addBooking(booking);
 
       Navigator.of(context).pushReplacement(
         PageRouteBuilder(

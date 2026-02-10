@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'dart:ui';
 import '../models/hall.dart';
 import '../screens/block_selection_screen.dart';
+import 'my_bookings_screen.dart';
 
 class BookingConfirmationScreen extends StatefulWidget {
   final Booking booking;
@@ -494,17 +495,15 @@ class _BookingConfirmationScreenState extends State<BookingConfirmationScreen>
             icon: Icons.list_alt,
             isPrimary: false,
             onTap: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(
-                    'Bookings list feature coming soon!',
-                    style: GoogleFonts.dmSans(fontWeight: FontWeight.w500),
-                  ),
-                  backgroundColor: const Color(0xFFB4FF39),
-                  behavior: SnackBarBehavior.floating,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
+              Navigator.of(context).push(
+                PageRouteBuilder(
+                  pageBuilder: (context, animation, secondaryAnimation) =>
+                      const MyBookingsScreen(),
+                  transitionsBuilder:
+                      (context, animation, secondaryAnimation, child) {
+                        return FadeTransition(opacity: animation, child: child);
+                      },
+                  transitionDuration: const Duration(milliseconds: 400),
                 ),
               );
             },

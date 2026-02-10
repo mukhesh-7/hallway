@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'dart:ui';
 import '../models/hall.dart';
+import '../services/booking_service.dart';
 
 class MyBookingsScreen extends StatefulWidget {
   const MyBookingsScreen({super.key});
@@ -16,8 +17,8 @@ class _MyBookingsScreenState extends State<MyBookingsScreen>
   late AnimationController _fadeController;
   late Animation<double> _fadeAnimation;
 
-  // Mock bookings data - replace with actual data from backend
-  final List<Booking> _bookings = [];
+  // Get bookings from service
+  List<Booking> get _bookings => BookingService().bookings;
 
   @override
   void initState() {
@@ -31,10 +32,18 @@ class _MyBookingsScreenState extends State<MyBookingsScreen>
       curve: Curves.easeOut,
     );
     _fadeController.forward();
+    BookingService().addListener(_updateBookings);
+  }
+
+  void _updateBookings() {
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   @override
   void dispose() {
+    BookingService().removeListener(_updateBookings);
     _fadeController.dispose();
     super.dispose();
   }
